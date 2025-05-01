@@ -1,0 +1,4 @@
+bin/
+__debug_bin*
+.env*
+!.env.test

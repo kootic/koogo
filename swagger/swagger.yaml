@@ -1,0 +1,162 @@
+basePath: /api
+definitions:
+  github_com_kootic_koogo_internal_dto.KooCreateUserRequest:
+    properties:
+      firstName:
+        type: string
+    type: object
+  github_com_kootic_koogo_internal_dto.KooPetResponse:
+    properties:
+      id:
+        type: string
+      ownerId:
+        type: string
+    type: object
+  github_com_kootic_koogo_internal_dto.KooUserResponse:
+    properties:
+      firstName:
+        type: string
+      id:
+        type: string
+      isSubscribed:
+        type: boolean
+    type: object
+  github_com_kootic_koogo_pkg_koohttp.APIResponseError:
+    properties:
+      errorCode:
+        type: string
+      status:
+        type: integer
+    type: object
+host: <host>
+info:
+  contact:
+    email: alex@kootic.com
+    name: Alex
+    url: https://github.com/kootic/koogo
+  description: This is a boilerplate for Go API projects.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Kootic Starter Project
+  version: 0.0.1
+paths:
+  /v1/health:
+    get:
+      consumes:
+      - application/json
+      description: Returns the health status of the application
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "503":
+          description: Service Unavailable
+      summary: Health check endpoint
+      tags:
+      - Health
+  /v1/koo/users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: Create user request
+        in: body
+        name: kooCreateUserRequest
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_kootic_koogo_internal_dto.KooCreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_kootic_koogo_internal_dto.KooUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_kootic_koogo_pkg_koohttp.APIResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_kootic_koogo_pkg_koohttp.APIResponseError'
+      summary: Create a new user
+      tags:
+      - Users
+  /v1/koo/users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_kootic_koogo_internal_dto.KooUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_kootic_koogo_pkg_koohttp.APIResponseError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_kootic_koogo_pkg_koohttp.APIResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_kootic_koogo_pkg_koohttp.APIResponseError'
+      summary: Get a user by ID
+      tags:
+      - Users
+  /v1/koo/users/{id}/pet:
+    get:
+      consumes:
+      - application/json
+      description: Get a user's pet
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_kootic_koogo_internal_dto.KooPetResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_kootic_koogo_pkg_koohttp.APIResponseError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_kootic_koogo_pkg_koohttp.APIResponseError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_kootic_koogo_pkg_koohttp.APIResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_kootic_koogo_pkg_koohttp.APIResponseError'
+      summary: Get a user's pet
+      tags:
+      - Users
+securityDefinitions:
+  BasicAuth.:
+    type: basic
+swagger: "2.0"
