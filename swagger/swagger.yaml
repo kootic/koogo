@@ -1,0 +1,18 @@
+basePath: /api
+host: <host>
+info:
+  contact:
+    email: alex@kootic.com
+    name: Alex
+    url: https://github.com/kootic/koogo
+  description: This is a boilerplate for Go API projects.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Kootic Starter Project
+  version: 0.0.1
+paths: {}
+securityDefinitions:
+  BasicAuth.:
+    type: basic
+swagger: "2.0"

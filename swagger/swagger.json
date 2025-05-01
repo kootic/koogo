@@ -1,0 +1,25 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a boilerplate for Go API projects.",
+        "title": "Kootic Starter Project",
+        "contact": {
+            "name": "Alex",
+            "url": "https://github.com/kootic/koogo",
+            "email": "alex@kootic.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "0.0.1"
+    },
+    "host": "\u003chost\u003e",
+    "basePath": "/api",
+    "paths": {},
+    "securityDefinitions": {
+        "BasicAuth.": {
+            "type": "basic"
+        }
+    }
+}

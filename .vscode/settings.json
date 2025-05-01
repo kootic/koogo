@@ -1,0 +1,20 @@
+{
+  "go.lintTool": "golangci-lint-v2",
+  "go.lintFlags": [
+    "run",
+    "--fix",
+    "--issues-exit-code=0",
+    "--output.text.colors=true",
+    "--output.text.path=stdout",
+    "--output.text.print-issued-lines=false",
+    "--show-stats=false"
+  ],
+  "go.formatTool": "custom",
+  "go.alternateTools": {
+    "customFormatter": "golangci-lint"
+  },
+  "go.formatFlags": ["fmt", "--stdin"],
+  "go.testEnvVars": {
+    "RUN_INTEGRATION_TESTS": "true"
+  }
+}

@@ -1,0 +1,60 @@
+version: "2"
+
+linters:
+  default: none
+  enable:
+    # Default linters
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    # Optional linters
+    - bodyclose
+    - dogsled
+    - errorlint
+    - gocritic
+    - gosec
+    - paralleltest
+    - misspell
+    - nlreturn
+    - revive
+    - tagalign
+    - unconvert
+    - usestdlibvars
+    - whitespace
+    - wsl
+    - sloglint
+    - errname
+    - godot
+  settings:
+    nlreturn:
+      block-size: 2
+    revive:
+      rules:
+        - name: exported
+          severity: warning
+          disabled: true
+    staticcheck:
+      checks:
+        - all
+        - -ST1000 # at least one file in a package should have a package comment
+
+formatters:
+  enable:
+    - gci
+    - gofmt
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(github.com/kootic)
+    gofmt:
+      simplify: true
+      rewrite-rules:
+        - pattern: "interface{}"
+          replacement: "any"
+
+run:
+  relative-path-mode: wd
