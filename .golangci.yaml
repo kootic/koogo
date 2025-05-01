@@ -1,0 +1,67 @@
+version: "2"
+
+linters:
+  default: none
+  enable:
+    # Default linters
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    # Optional linters
+    - bodyclose
+    - dogsled
+    - errorlint
+    - gocritic
+    - gosec
+    - paralleltest
+    - misspell
+    - nlreturn
+    - revive
+    - tagalign
+    - unconvert
+    - usestdlibvars
+    - wsl_v5
+    - errname
+    - godot
+  settings:
+    nlreturn:
+      block-size: 2
+    revive:
+      rules:
+        - name: exported
+          severity: warning
+          disabled: true
+    staticcheck:
+      checks:
+        - all
+        - -ST1000 # at least one file in a package should have a package comment
+    wsl_v5:
+      allow-first-in-block: true
+      allow-whole-block: true
+  exclusions:
+    paths:
+      - swagger/docs.go
+
+formatters:
+  enable:
+    - gci
+    - gofmt
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(github.com/kootic)
+    gofmt:
+      simplify: true
+      rewrite-rules:
+        - pattern: "interface{}"
+          replacement: "any"
+  exclusions:
+    paths:
+      - swagger/docs.go
+
+run:
+  relative-path-mode: wd

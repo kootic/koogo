@@ -1,0 +1,108 @@
+name: koogo
+
+services:
+  koogo-postgres:
+    container_name: koogo-postgres
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: koogodb
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/init_postgres.sh:/docker-entrypoint-initdb.d/init_postgres.sh:ro
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "koogodb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - koogo-network
+
+  koogo-otel-collector:
+    container_name: koogo-otel-collector
+    image: otel/opentelemetry-collector-contrib:0.123.0
+    volumes:
+      - ./deployment/otel-collector/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+    environment:
+      GRAFANA_CLOUD_OTLP_ENDPOINT: ${GRAFANA_CLOUD_OTLP_ENDPOINT}
+      GRAFANA_CLOUD_INSTANCE_ID: ${GRAFANA_CLOUD_INSTANCE_ID}
+      GRAFANA_CLOUD_API_KEY: ${GRAFANA_CLOUD_API_KEY}
+    ports:
+      # - 1888:1888 # pprof extension
+      # - 8888:8888 # Prometheus metrics exposed by the Collector
+      # - 8889:8889 # Prometheus exporter metrics
+      # - 13133:13133 # health_check extension
+      - 4317:4317 # OTLP gRPC receiver
+      # - 4318:4318 # OTLP http receiver
+      # - 55679:55679 # zpages extension
+    networks:
+      - koogo-network
+
+  koogo-migrate:
+    profiles:
+      - services
+    build:
+      context: .
+      dockerfile: deployment/koogo/Dockerfile
+    depends_on:
+      - koogo-postgres
+    container_name: koogo-migrate
+    image: kootic/koogo-snapshot:latest
+    command: ["migrate", "--migrations-dir", "/app/migrations"]
+    environment:
+      KOO_DB_HOST: koogo-postgres
+      KOO_DB_PORT: 5432
+      KOO_DB_USERNAME: postgres
+      KOO_DB_PASSWORD: postgres
+      KOO_DB_DATABASE: koogodb
+    networks:
+      - koogo-network
+
+  koogo-api:
+    profiles:
+      - services
+    build:
+      context: .
+      dockerfile: deployment/koogo/Dockerfile
+    depends_on:
+      - koogo-migrate
+    container_name: koogo-api
+    image: kootic/koogo-snapshot:latest
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - 8080:80
+    environment:
+      KOO_APP_NAME: koogo
+      KOO_APP_VERSION: local
+      KOO_APP_ENV: local
+      KOO_APP_PORT: 80
+      KOO_APP_LOG_LEVEL: debug
+      KOO_SWAGGER_ENABLED: true
+      KOO_SWAGGER_USERNAME: swagger
+      KOO_SWAGGER_PASSWORD: swagger
+      KOO_OTEL_ENABLED: true
+      KOO_OTEL_EXPORTER: otlp-grpc
+      OTEL_EXPORTER_OTLP_ENDPOINT: koogo-otel-collector:4317
+      OTEL_EXPORTER_OTLP_INSECURE: true
+      KOO_DB_HOST: koogo-postgres
+      KOO_DB_PORT: 5432
+      KOO_DB_USERNAME: postgres
+      KOO_DB_PASSWORD: postgres
+      KOO_DB_DATABASE: koogodb
+    networks:
+      - koogo-network
+
+volumes:
+  pgdata:
+    driver: local
+networks:
+  koogo-network:
+    driver: bridge
