@@ -1,0 +1,13 @@
+name: Build and Deploy
+
+run-name: "📦🚀 Build and Deploy #${{ github.run_number }}"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yaml
+
+  deploy:
+    uses: ./.github/workflows/deploy.yaml

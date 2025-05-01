@@ -1,0 +1,12 @@
+name: Validate
+
+run-name: "🔬 Validate #${{ github.run_number }}"
+
+on:
+  pull_request:
+  workflow_call:
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
